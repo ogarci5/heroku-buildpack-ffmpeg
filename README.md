@@ -15,8 +15,8 @@ To use this buildpack, you should prepare .buildpacks file that contains this bu
     $ cat .buildpacks
     https://github.com/ogarci5/heroku-buildpack-ffmpeg
     https://github.com/heroku/heroku-buildpack-ruby.git
-
-    $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi
+    
+    $ heroku create --stack cedar --buildpack https://github.com/ddollar/heroku-buildpack-multi
 
     $ git push heroku master
     ...

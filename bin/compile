@@ -6,7 +6,7 @@ indent() {
 
 echo "-----> Install ffmpeg"
 BUILD_DIR=$1
-VENDOR="vendor"
+VENDOR_DIR="vendor"
 DOWNLOAD_URL="https://github.com/ogarci5/heroku-buildpack-ffmpeg/blob/master/binaries/ffmpeg-x264-vorbis.tar.gz?raw=true"
 
 echo "DOWNLOAD_URL = " $DOWNLOAD_URL | indent
