@@ -1,5 +1,5 @@
-Heroku buildpack: FFMpeg
-=======================
+Heroku buildpack: FFMpeg with x264 and Vorbis
+=============================================
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for using [ffmpeg](http://www.ffmpeg.org/) in your project.  
 It doesn't do anything else, so to actually compile your app you should use [heroku-buildpack-multi](https://github.com/ddollar/heroku-buildpack-multi) to combine it with a real buildpack.
@@ -13,8 +13,8 @@ To use this buildpack, you should prepare .buildpacks file that contains this bu
     ...
     
     $ cat .buildpacks
-    https://github.com/shunjikonishi/heroku-buildpack-ffmpeg
-    https://github.com/heroku/heroku-buildpack-play
+    https://github.com/ogarci5/heroku-buildpack-ffmpeg
+    https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi
 
@@ -29,4 +29,10 @@ Hacking
 -------
 If you want to use your own ffmpeg binary, fork and rewrite following line.
 
-https://github.com/shunjikonishi/heroku-buildpack-ffmpeg/blob/master/bin/compile#L10
+https://github.com/ogarci5/heroku-buildpack-ffmpeg/blob/master/bin/compile#L10
+
+Configuration
+-------------
+FFMpeg was configured with the following options:
+
+    $ ./configure --enable-gpl --enable-libx264 --enable-libvorbis
