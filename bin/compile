@@ -8,16 +8,33 @@ echo "-----> Install ffmpeg"
 BUILD_DIR=$1
 VENDOR_DIR="vendor"
 DOWNLOAD_URL="https://github.com/ogarci5/heroku-buildpack-ffmpeg/blob/master/binaries/ffmpeg-x264-vorbis.tar.gz?raw=true"
-
-echo "DOWNLOAD_URL = " $DOWNLOAD_URL | indent
+LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
 cd $BUILD_DIR
 mkdir -p $VENDOR_DIR
 cd $VENDOR_DIR
 curl -L --silent $DOWNLOAD_URL | tar xz
+cd ..
 
-echo "exporting PATH and LIBRARY_PATH" | indent
-PROFILE_PATH="$BUILD_DIR/.profile.d/ffmpeg.sh"
-mkdir -p $(dirname $PROFILE_PATH)
-echo 'export PATH="$PATH:$HOME/vendor/ffmpeg_build/bin"' >> $PROFILE_PATH
-echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/vendor/ffmpeg_build/lib"' >> $PROFILE_PATH
+topic "Writing profile script"
+mkdir -p $BUILD_DIR/.profile.d
+cat <<EOF >$BUILD_DIR/.profile.d/000_apt.sh
+export PATH="\$HOME/$VENDOR_DIR/bin:\$PATH"
+export LD_LIBRARY_PATH="\$HOME/$VENDOR_DIR/lib/x86_64-linux-gnu:\$HOME/$VENDOR_DIR/lib/i386-linux-gnu:\$HOME/$VENDOR_DIR/lib:\$LD_LIBRARY_PATH"
+export LIBRARY_PATH="\$HOME/$VENDOR_DIR/lib/x86_64-linux-gnu:\$HOME/$VENDOR_DIR/lib/i386-linux-gnu:\$HOME/$VENDOR_DIR/lib:\$LIBRARY_PATH"
+export INCLUDE_PATH="\$HOME/$VENDOR_DIR/include:\$INCLUDE_PATH"
+export CPATH="\$INCLUDE_PATH"
+export CPPPATH="\$INCLUDE_PATH"
+export PKG_CONFIG_PATH="\$HOME/$VENDOR_DIR/lib/x86_64-linux-gnu/pkgconfig:\$HOME/$VENDOR_DIR/lib/i386-linux-gnu/pkgconfig:\$HOME/$VENDOR_DIR/lib/pkgconfig:\$PKG_CONFIG_PATH"
+EOF
+
+export PATH="$BUILD_DIR/$VENDOR_DIR/bin:$PATH"
+export LD_LIBRARY_PATH="$BUILD_DIR/$VENDOR_DIR/lib/x86_64-linux-gnu:$BUILD_DIR/$VENDOR_DIR/lib/i386-linux-gnu:$BUILD_DIR/$VENDOR_DIR/lib:$LD_LIBRARY_PATH"
+export LIBRARY_PATH="$BUILD_DIR/$VENDOR_DIR/lib/x86_64-linux-gnu:$BUILD_DIR/$VENDOR_DIR/lib/i386-linux-gnu:$BUILD_DIR/$VENDOR_DIR/lib:$LIBRARY_PATH"
+export INCLUDE_PATH="$BUILD_DIR/$VENDOR_DIR/include:$INCLUDE_PATH"
+export CPATH="$INCLUDE_PATH"
+export CPPPATH="$INCLUDE_PATH"
+export PKG_CONFIG_PATH="$BUILD_DIR/$VENDOR_DIR/lib/x86_64-linux-gnu/pkgconfig:$BUILD_DIR/$VENDOR_DIR/lib/i386-linux-gnu/pkgconfig:$BUILD_DIR/$VENDOR_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+#give environment to later buildpacks
+export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LP_DIR/export"
